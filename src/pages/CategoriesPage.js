@@ -3,6 +3,8 @@ import db from "../db";
 import FormCategories from "../components/Categories/FormCategories";
 import UserContext from "../context/UserContext";
 import Modal from 'react-bootstrap/Modal';
+import Nav from "../components/shared/Nav"
+import Aside from '../components/shared/Aside';
 export default function CategoriesPage(props) {
     const [id, setId] = useState();
     const [name, setName] = useState();
@@ -14,9 +16,9 @@ export default function CategoriesPage(props) {
                 state.categories = snapshot.val();
                 dispatch({ type: "update_categories", payload: state.categories });
                 localStorage.setItem('state', JSON.stringify(state));
-                setTimeout(()=>{
+                setTimeout(() => {
                     dispatch({ type: "hide_loading" });
-                },1000)
+                }, 1000)
             } else {
                 console.log("No data available");
             }
@@ -56,7 +58,7 @@ export default function CategoriesPage(props) {
         console.log("deleteCate");
         console.log(i.id)
         if (window.confirm("Bạn chắc chắn muốn xóa danh mục này?")) {
-            const objectRef = db.ref(`/categories/${i.id-1}`);
+            const objectRef = db.ref(`/categories/${i.id - 1}`);
             objectRef.remove()
                 .then(() => {
                     console.log('Object deleted successfully!');
@@ -65,21 +67,25 @@ export default function CategoriesPage(props) {
                     console.error(`Error deleting object: ${error}`);
                 })
         }
+        refresh();
     }
     const formSubmit = (e) => {
         console.log("submit")
         e.preventDefault();
         db.ref('categories/').set(data);
+        refresh();
     }
     const handleInput = (e) => {
         setName(e.target.value);
     }
     return (
         <React.Fragment>
+            <Nav />
+            <Aside></Aside>
             <section class="is-hero-bar">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
                     <h1 class="title">
-                        Danh Mục
+                        Categories
                     </h1>
                 </div>
             </section>
@@ -88,9 +94,9 @@ export default function CategoriesPage(props) {
                 <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
                     <ul>
                         <li>Admin</li>
-                        <li>Danh Mục</li>
+                        <li>Categories</li>
                     </ul>
-                    
+
                 </div>
             </section>
 
@@ -106,58 +112,58 @@ export default function CategoriesPage(props) {
                         </thead>
                         <tbody >
                             {
-                                    data ? data.categories.map((item, index) => {
-                                        return (
-                                            <tr key={index}>
-                                                <td className="text-center">
-                                                    {item.id}
-                                                </td>
-                                                <td data-label="Name" className="text-center">{item.name}</td>
+                                data ? data.categories.map((item, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td className="text-center">
+                                                {item.id}
+                                            </td>
+                                            <td data-label="Name" className="text-center">{item.name}</td>
 
-                                                <td className="actions-cell ">
-                                                    <div className="buttons center nowrap">
-                                                        <button onClick={() => handleShow(item)} className="button small --jb-modal " style={{ backgroundColor: 'rgb(203,112,0)', borderOpacity: '1', color: 'rgb(255,255,255,0.8)' }} data-target="sample-modal-2" type="button">
-                                                            <span className="icon">Sửa</span>
-                                                        </button>
-                                                        <button onClick={() => deleteCate(item)} className="button small red --jb-modal" data-target="sample-modal" type="button">
-                                                            <span className="icon">Xóa</span>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )
-                                    }): <div>Không có danh mục phù hợp</div>
+                                            <td className="actions-cell ">
+                                                <div className="buttons center nowrap">
+                                                    <button onClick={() => handleShow(item)} className="button small --jb-modal " style={{ backgroundColor: 'rgb(203,112,0)', borderOpacity: '1', color: 'rgb(255,255,255,0.8)' }} data-target="sample-modal-2" type="button">
+                                                        <span className="icon">Sửa</span>
+                                                    </button>
+                                                    <button onClick={() => deleteCate(item)} className="button small red --jb-modal" data-target="sample-modal" type="button">
+                                                        <span className="icon">Xóa</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                }) : <div>Không có danh mục phù hợp</div>
                             }
                         </tbody>
                     </table>
                 </div>
-                    <Modal show={show} onHide={handleClose}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Sửa thông tin</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <form method="post" onSubmit={formSubmit} className="form-control">
-                                <div className="control icons-left">
-                                    <input name="name" className="input" type="text" value={name} onChange={handleInput} required />
-                                    <span className="icon left"><i className="mdi mdi-account"></i></span>
-                                </div>
-                            </form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <div className="field grouped mt-4" >
-                                <div className="control">
-                                    <button type="submit" className="button btn-success" onClick={configCate}>
-                                        OK
-                                    </button>
-                                </div>
-                                <div className="control">
-                                    <button type="reset" className="button red" onClick={handleClose}>
-                                        Hủy
-                                    </button>
-                                </div>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Sửa thông tin</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <form method="post" onSubmit={formSubmit} className="form-control">
+                            <div className="control icons-left">
+                                <input name="name" className="input" type="text" value={name} onChange={handleInput} required />
+                                <span className="icon left"><i className="mdi mdi-account"></i></span>
                             </div>
-                        </Modal.Footer>
-                    </Modal>
+                        </form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <div className="field grouped mt-4" >
+                            <div className="control">
+                                <button type="submit" className="button btn-success" onClick={configCate}>
+                                    OK
+                                </button>
+                            </div>
+                            <div className="control">
+                                <button type="reset" className="button red" onClick={handleClose}>
+                                    Hủy
+                                </button>
+                            </div>
+                        </div>
+                    </Modal.Footer>
+                </Modal>
             </div>
         </React.Fragment>
     )

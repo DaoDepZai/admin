@@ -43,15 +43,13 @@ export default function DetailProducts(props) {
         console.log(cate);
 
     }
-
     const configPro = (e) => {
         e.preventDefault();
         // A post entry.
         console.log("config");
-        console.log(cate);
-        console.log(image);
+        
         var postData = {
-            id: 34,
+            id: id,
             name: name,
             nameFood: nameFood,
             price: price,
@@ -60,6 +58,7 @@ export default function DetailProducts(props) {
             reviewDemo: reviewDemo,
             start: start,
         };
+        console.log(postData);
         // Get a key for a new Post.
         var PostKey = id - 1;
         // Write the new post's data simultaneously in the posts list and the user's post list.
@@ -115,7 +114,7 @@ export default function DetailProducts(props) {
                             </button>
                         </div>
                         <div className="control">
-                            <NavLink to="/products" className="button red" onClick={window.location.reload()}>
+                            <NavLink to="/products" className="button red" >
                                 Back
                             </NavLink>
                         </div>

@@ -13,7 +13,23 @@ export default function FormCategories(props) {
             setCate(cate);
         }
     }
-   
+    const refresh = () => {
+        const dbRef = db.ref();
+        dbRef.child("/categories").get().then((snapshot) => {
+            if (snapshot.exists()) {
+                state.categories = snapshot.val();
+                dispatch({ type: "update_categories", payload: state.categories });
+                localStorage.setItem('state', JSON.stringify(state));
+                setTimeout(() => {
+                    dispatch({ type: "hide_loading" });
+                }, 1000)
+            } else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
     let obj = {};
     const formSubmit = (e) => {
         const value = { ...cate };
@@ -23,8 +39,9 @@ export default function FormCategories(props) {
         console.log(data)
         e.preventDefault();
         db.ref('categories/').set(data);
+        refresh();
     }
-  
+
     return (
         <React.Fragment>
             <div className="card mb-6" style={{ width: '50%', height: '75%' }}>
@@ -40,7 +57,7 @@ export default function FormCategories(props) {
                             <input name="name" className="input" type="text" placeholder="Tên danh mục" onChange={handleInput} required />
                             <span className="icon left"><i className="mdi mdi-account"></i></span>
                         </div>
-                        
+
                         <div className="field grouped mt-4" >
                             <div className="control">
                                 <button type="submit" className="button green" >
@@ -56,7 +73,7 @@ export default function FormCategories(props) {
                     </form>
                 </div>
             </div>
-            
+
         </React.Fragment>
     )
 }
